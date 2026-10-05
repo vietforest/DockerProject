@@ -20,7 +20,7 @@ services:
     container_name: jellyfin
     restart: unless-stopped
     volumes:
-      - ${MEDIA_DIR}:/media:ro
+      - ${MEDIA_DIR}:/media
       - jellyfin-config:/config
       - jellyfin-cache:/cache
     ports:
