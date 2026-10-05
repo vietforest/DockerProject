@@ -1,7 +1,6 @@
 services:
   metube:
     image: ghcr.io/alexta69/metube
-    user: "${PUID}:${PGID}"
     environment:
       DOWNLOAD_DIR: /downloads/video
       AUDIO_DOWNLOAD_DIR: /downloads/music
@@ -15,7 +14,6 @@ services:
 
   jellyfin:
     image: jellyfin/jellyfin:latest
-    user: "${PUID}:${PGID}"
     volumes:
       - media:/media:ro           # read-only: it only consumes
       - jellyfin-config:/config
