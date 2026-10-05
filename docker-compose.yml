@@ -1,0 +1,18 @@
+services:
+  jellyfin:
+    image: jellyfin/jellyfin:10.11.x   # pin an exact tag
+    networks: [media]
+    volumes:
+      - jellyfin-config:/config
+      - ./media:/media:ro
+
+  metatube-server:
+    image: metatube/metatube-server:<pinned-tag>
+    networks: [media]
+    # no ports: needed, Jellyfin reaches it over the internal network
+
+networks:
+  media:
+
+volumes:
+  jellyfin-config:
