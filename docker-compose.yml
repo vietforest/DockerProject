@@ -1,18 +1,39 @@
 services:
-  jellyfin:
-    image: jellyfin/jellyfin:10.11.x   # pin an exact tag
-    networks: [media]
+  metube:
+    image: ghcr.io/alexta69/metube:<pinned-tag>
+    user: "${PUID}:${PGID}"
+    environment:
+      DOWNLOAD_DIR: /downloads/video
+      AUDIO_DOWNLOAD_DIR: /downloads/music
+      STATE_DIR: /config
     volumes:
-      - jellyfin-config:/config
-      - ./media:/media:ro
+      - media:/downloads          # read-write: it produces the files
+      - metube-config:/config
+    ports:
+      - "8081:8081"
+    networks: [media-net]
 
-  metatube-server:
-    image: metatube/metatube-server:<pinned-tag>
-    networks: [media]
-    # no ports: needed, Jellyfin reaches it over the internal network
+  jellyfin:
+    image: jellyfin/jellyfin:<pinned-tag>
+    user: "${PUID}:${PGID}"
+    volumes:
+      - media:/media:ro           # read-only: it only consumes
+      - jellyfin-config:/config
+      - jellyfin-cache:/cache
+    ports:
+      - "8096:8096"
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8096/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    networks: [media-net]
 
 networks:
-  media:
+  media-net:
 
 volumes:
+  media:
+  metube-config:
   jellyfin-config:
+  jellyfin-cache:
